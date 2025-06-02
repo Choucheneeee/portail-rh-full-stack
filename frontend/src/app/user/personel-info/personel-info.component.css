@@ -1,0 +1,30 @@
+@media (max-width: 640px) {
+  .avatar-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .info-card {
+    padding: 1rem;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+  }
+
+  .info-label {
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Tailwind responsive classes are already handling most cases, 
+   but we can add custom breakpoints if needed */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid {
+    gap: 1.5rem;
+  }
+}

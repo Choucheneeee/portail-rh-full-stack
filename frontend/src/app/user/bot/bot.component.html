@@ -1,0 +1,132 @@
+<div class="fixed bottom-4 right-4 z-50">
+    <!-- Chat Toggle Button with pulse effect -->
+    <button *ngIf="!isChatOpen" 
+            (click)="toggleChat()"
+            class="relative bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full p-3 sm:p-4 shadow-lg transition-all duration-300 transform hover:scale-110">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full blur opacity-30 group-hover:opacity-50 animate-pulse"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 relative" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+
+    <!-- Enhanced Chat Window -->
+    <div *ngIf="isChatOpen" 
+         class="fixed bottom-0 right-0 sm:bottom-4 sm:right-4 bg-gradient-to-b from-white to-gray-50 rounded-t-lg sm:rounded-lg shadow-2xl w-full sm:w-[350px] md:w-[400px] lg:w-[450px] h-[90vh] sm:h-[36rem] flex flex-col transition-all duration-300 animate-slideIn">
+        <!-- Modernized Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-3 sm:p-4 rounded-t-lg flex justify-between items-center">
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="relative">
+                    <div class="h-2 w-2 sm:h-3 sm:w-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <div class="absolute inset-0 h-2 w-2 sm:h-3 sm:w-3 bg-green-400 rounded-full animate-ping"></div>
+                </div>
+                <h3 class="font-semibold text-base sm:text-lg">Chat Assistant</h3>
+            </div>
+            <button (click)="toggleChat()" 
+                    class="hover:bg-white/20 rounded-full p-1.5 sm:p-2 transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Enhanced Messages Container -->
+        <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4" #messageContainer>
+            <ng-container *ngFor="let message of messages">
+                <!-- User Message (Right) -->
+                <div *ngIf="message.isUser" 
+                     class="flex justify-end animate-fadeIn">
+                    <div class="flex flex-col items-end max-w-[85%] sm:max-w-[80%]">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-none px-3 py-2 sm:px-4 sm:py-2 break-words text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow duration-300">
+                            {{ message.text }}
+                        </div>
+                        <span class="text-[10px] sm:text-xs text-gray-500 mt-1 px-2">
+                            {{ message.timestamp | date:'shortTime' }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Bot Message (Left) -->
+                <div *ngIf="!message.isUser" 
+                     class="flex justify-start animate-fadeIn">
+                    <div class="flex flex-col items-start max-w-[85%] sm:max-w-[80%]">
+                        <div class="bg-gray-100 text-gray-800 rounded-2xl rounded-tl-none px-3 py-2 sm:px-4 sm:py-2 break-words text-sm sm:text-base shadow-sm hover:shadow-md transition-shadow duration-300">
+                            <ng-container *ngFor="let line of formatMessage(message.text)">
+                                <!-- Headers -->
+                                <h3 *ngIf="line.type === 'header'" 
+                                    class="font-bold text-lg text-blue-700 mt-4 mb-2"
+                                    [innerHTML]="line.content">
+                                </h3>
+                                
+                                <!-- Dividers -->
+                                <hr *ngIf="line.type === 'divider'" 
+                                    class="my-3 border-gray-200">
+                                
+                                <!-- Code blocks -->
+                                <pre *ngIf="line.type === 'code'" 
+                                     class="bg-gray-800 text-white p-3 rounded-lg my-2 overflow-x-auto">
+                                    <code>{{line.content}}</code>
+                                </pre>
+                                
+                                <!-- List items -->
+                                <ul *ngIf="line.type === 'list'" class="ml-4 my-2">
+                                    <li *ngFor="let item of line.items" 
+                                        class="flex items-start">
+                                        <span class="mr-2">•</span>
+                                        <span [innerHTML]="item"></span>
+                                    </li>
+                                </ul>
+                                
+                                <!-- Regular text -->
+                                <p *ngIf="line.type === 'text'" 
+                                   class="mb-2"
+                                   [innerHTML]="line.content">
+                                </p>
+                            </ng-container>
+                        </div>
+                        <span class="text-[10px] sm:text-xs text-gray-500 mt-1 px-2">
+                            {{ message.timestamp | date:'shortTime' }}
+                        </span>
+                    </div>
+                </div>
+            </ng-container>
+            
+            <!-- Enhanced Typing Indicator -->
+            <div *ngIf="isTyping" class="flex justify-start animate-fadeIn">
+                <div class="bg-gray-100 rounded-2xl px-3 py-2 sm:px-4 sm:py-2 shadow-sm">
+                    <div class="flex space-x-1">
+                        <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-bounce"></div>
+                        <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-indigo-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add this before your input field -->
+        <div class="flex flex-wrap gap-2 p-3 border-t border-gray-200">
+            <button *ngFor="let reply of quickReplies"
+                    (click)="selectQuickReply(reply)"
+                    class="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200 text-gray-700">
+                {{ reply.text }}
+            </button>
+        </div>
+
+        <!-- Existing input field can remain for custom questions -->
+        <div class="p-3 sm:p-4 border-t border-gray-200 bg-white/50 backdrop-blur-sm rounded-b-lg">
+            <form (ngSubmit)="sendMessage()" class="flex space-x-2">
+                <input type="text" 
+                       [(ngModel)]="newMessage"
+                       name="message"
+                       placeholder="Type your message..."
+                       class="flex-1 border border-gray-200 rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all duration-300">
+                <button type="submit" 
+                        [disabled]="isTyping"
+                        class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full p-2 sm:p-3 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

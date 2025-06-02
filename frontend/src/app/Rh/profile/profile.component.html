@@ -1,0 +1,306 @@
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <style>
+      .read-only {
+        background-color: #f3f4f6;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+    </style>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="profile-container">    <!-- Message Alert -->
+      <div *ngIf="showMessage" 
+           [class.bg-green-50]="messageType === 'success'"
+           [class.bg-red-50]="messageType === 'error'"
+           [class.border-green-200]="messageType === 'success'"
+           [class.border-red-200]="messageType === 'error'"
+           class="fixed top-4 right-4 z-50 p-4 rounded-lg border shadow-lg max-w-md transition-all duration-300 ease-in-out">
+        <div class="flex items-start">
+          <div class="flex-shrink-0">
+            <svg *ngIf="messageType === 'success'" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <svg *ngIf="messageType === 'error'" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p [class.text-green-800]="messageType === 'success'"
+               [class.text-red-800]="messageType === 'error'"
+               class="text-sm font-medium">
+              {{ message }}
+            </p>
+          </div>
+          <div class="ml-auto pl-3">
+            <div class="-mx-1.5 -my-1.5">
+              <button type="button"
+                      (click)="closeMessage()"
+                      class="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                      [class.text-green-400]="messageType === 'success'"
+                      [class.text-red-400]="messageType === 'error'"
+                      [class.hover:bg-green-100]="messageType === 'success'"
+                      [class.hover:bg-red-100]="messageType === 'error'">
+                <span class="sr-only">Fermer</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="userForm.invalid" class="mt-4 mx-4 mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              Informations requises
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              <p>Veuillez remplir toutes les informations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Loading Overlay -->
+      <div *ngIf="isLoading && isSubmitting" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="loading-spinner"></div>
+      </div>
+  
+      <!-- Compact Header -->
+      <div class="bg-gray-400 px-4 sm:px-6 py-6 sm:py-8">
+        <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+          <!-- Avatar Section -->
+          <div class="relative">
+            <div class="w-24 sm:w-32 h-24 sm:h-32">
+              <img [src]="imageUrl || 'assets/images/icon/man.png'" 
+                   [alt]="allinfo.firstName" 
+                   class="rounded-full w-full h-full object-cover ring-4 ring-white/50">
+              
+              <label class="absolute bottom-0 right-0 bg-white rounded-full p-2 cursor-pointer hover:bg-gray-100 transition-colors shadow-lg">
+                <input type="file" 
+                       (change)="onFileSelected($event)" 
+                       accept="image/*" 
+                       class="hidden">
+                <i class="fas fa-camera text-gray-600"></i>
+              </label>
+            </div>
+          </div>
+          
+          <div class="text-center sm:text-left">
+            <h2 class="text-xl sm:text-2xl font-bold text-white">
+              {{ allinfo.firstName || 'Utilisateur' }} {{ allinfo.lastName || '' }}
+            </h2>
+            <p class="text-white/80">{{ allinfo.professionalInfo?.position || 'Poste' }}</p>
+            
+            <!-- Upload Button -->
+            
+          </div>
+        </div>
+      </div>
+  
+      <!-- Tabs -->
+      <nav class="flex overflow-x-auto sticky top-0 bg-white shadow-sm z-10">
+        <div class="flex-1 flex min-w-full sm:min-w-0">
+          <button *ngFor="let tab of ['personnel','signature']"
+                  type="button" 
+                  (click)="toggleView(tab)"
+                  class="flex-1 px-4 py-3 text-sm sm:text-base font-medium transition-colors whitespace-nowrap"
+                  [class.text-blue-600]="isTabActive(tab)"
+                  [class.border-b-2]="isTabActive(tab)"
+                  [class.border-blue-600]="isTabActive(tab)">
+            {{ tab === 'personnel' ? 'Personnel' :
+              tab === 'signature' ? 'Signature' :
+               tab === 'professionnel' ? 'Professionnel' : 
+               tab === 'social' ? 'Social' : 
+               'Financier' }}
+          </button>
+        </div>
+      </nav>
+  
+      <!-- Content Sections -->
+      <div class="p-4 sm:p-6">
+        <!-- Personal Information -->
+        <div *ngIf="isPersonalInfoVisible" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div class="form-group">
+            <label>Email <span class="text-red-500">*</span></label>
+            <input type="email" formControlName="email" class="form-input" [class.border-red-500]="userForm.get('email')?.invalid && userForm.get('email')?.touched"/>
+            <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('email')?.errors?.['required']">Email est requis</span>
+              <span *ngIf="userForm.get('email')?.errors?.['email']">Email invalide</span>
+            </div>
+          </div>
+  
+          <!-- CIN Field with Toggle -->
+          <div class="form-group">
+            <div class="flex items-center justify-between">
+              <label>CIN <span class="text-red-500">*</span></label>
+              <button type="button" 
+                      (click)="toggleCinField()"
+                      class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none">
+                {{ showCinField ? 'Masquer' : 'Afficher' }} CIN
+              </button>
+            </div>
+            <div *ngIf="showCinField" class="mt-2">
+              <input type="number" 
+                     formControlName="cin" 
+                     class="form-input"
+                     [class.border-red-500]="userForm.get('cin')?.invalid && userForm.get('cin')?.touched"
+                    />
+              <div *ngIf="userForm.get('cin')?.invalid && userForm.get('cin')?.touched" class="text-red-500 text-sm mt-1">
+                <span *ngIf="userForm.get('cin')?.errors?.['required']">CIN est requis</span>
+                <span *ngIf="userForm.get('cin')?.errors?.['pattern']">CIN doit contenir 8 chiffres</span>
+              </div>
+            </div>
+            <div *ngIf="!showCinField" class="mt-2 text-sm text-gray-500">
+              CIN masqué pour des raisons de sécurité
+            </div>
+          </div>
+  
+  <app-phone-input 
+    [parentForm]="userForm" 
+    [readonly]="false">
+  </app-phone-input>        <div class="form-group">
+            <label>Adresse <span class="text-red-500">*</span></label>
+            <input type="text" formControlName="address" class="form-input" [class.border-red-500]="userForm.get('address')?.invalid && userForm.get('address')?.touched"/>
+            <div *ngIf="userForm.get('address')?.invalid && userForm.get('address')?.touched" class="text-red-500 text-sm mt-1">
+              Adresse est requise
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Date de naissance <span class="text-red-500">*</span></label>
+            <input type="date" class="form-input" formControlName="birthDate" [class.border-red-500]="userForm.get('birthDate')?.invalid && userForm.get('birthDate')?.touched"/>
+            <div *ngIf="userForm.get('birthDate')?.invalid && userForm.get('birthDate')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('birthDate')?.errors?.['required']">Date de naissance est requise</span>
+              <span *ngIf="userForm.get('birthDate')?.errors?.['minimumAge']">Doit avoir 18 ans ou plus</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Professional Information -->
+        
+  
+        <!-- Social Information -->
+        
+  
+        
+        <div *ngIf="isSignatureVisible" class="grid grid-cols-1 gap-6 py-4">
+            <div class="space-y-6">
+              <div class="form-group">
+                <!-- Signature Type Selection -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Type de signature</label>
+                  <div class="flex space-x-4">
+                    <button type="button" 
+                            (click)="onSignatureTypeChange('signature')"
+                            class="px-4 py-2 rounded-md transition-colors"
+                            [class.bg-blue-600]="signatureType === 'signature'"
+                            [class.text-white]="signatureType === 'signature'"
+                            [class.bg-gray-200]="signatureType !== 'signature'"
+                            [class.text-gray-700]="signatureType !== 'signature'">
+                      Signature manuelle
+                    </button>
+                    <button type="button" 
+                            (click)="onSignatureTypeChange('stamp')"
+                            class="px-4 py-2 rounded-md transition-colors"
+                            [class.bg-blue-600]="signatureType === 'stamp'"
+                            [class.text-white]="signatureType === 'stamp'"
+                            [class.bg-gray-200]="signatureType !== 'stamp'"
+                            [class.text-gray-700]="signatureType !== 'stamp'">
+                      Cachet
+                    </button>
+                  </div>
+                </div>
+  
+                <!-- Manual Signature Section -->
+                <div *ngIf="signatureType === 'signature'" class="mt-6">
+                  <div *ngIf="allinfo.signature" class="mb-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Signature actuelle :</p>
+                    <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+                      <img [src]="allinfo.signature" alt="Signature actuelle" class="max-h-32 mx-auto" />
+                    </div>
+                  </div>
+                
+                  <div class="signature-container border border-gray-300 rounded-md p-4 bg-white">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Nouvelle signature :</p>
+                    <canvas #signaturePad class="border border-gray-200 rounded w-full h-64"></canvas>
+                    <div class="flex space-x-2 mt-4">
+                      <button type="button" 
+                              (click)="clear()" 
+                              class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                        Effacer
+                      </button>
+                      <button type="button" 
+                              (click)="save()" 
+                              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                        Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-500 mt-2">Veuillez signer dans la zone ci-dessus</p>
+                </div>
+  
+                <!-- Stamp Section -->
+                <div *ngIf="signatureType === 'stamp'" class="mt-6">
+                  <div *ngIf="allinfo.signature" class="mb-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Cachet actuel :</p>
+                    <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+                      <img [src]="allinfo.signature" alt="Cachet actuel" class="max-h-32 mx-auto" />
+                    </div>
+                  </div>
+  
+                  <div class="stamp-container border border-gray-300 rounded-md p-4 bg-white">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Nouveau cachet :</p>
+                    <div class="flex flex-col items-center space-y-4">
+                      <input type="file" 
+                             (change)="onStampSelected($event)" 
+                             accept="image/*" 
+                             class="hidden" 
+                             #stampInput>
+                      <button type="button" 
+                             (click)="stampInput.click()" 
+                             class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                        Choisir un fichier
+                      </button>
+                      <div *ngIf="stampPreview" class="w-full">
+                        <img [src]="stampPreview" alt="Aperçu du cachet" class="max-h-32 mx-auto" />
+                      </div>
+                      <div class="flex space-x-2 mt-4">
+                        <button type="button" 
+                                (click)="clearStamp()" 
+                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                          Effacer
+                        </button>
+                        <button type="button" 
+                                (click)="save()" 
+                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                          Enregistrer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- Right Column -->
+       
+        </div>
+      <!-- Submit Button -->
+      <div class="sticky bottom-0 bg-white border-t p-4 flex justify-end">
+        <button type="submit" 
+                [disabled]="isLoading"
+                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+          <span *ngIf="isLoading" class="mr-2">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+          Enregistrer les modifications
+        </button>
+      </div>
+  
+      
+    </form>
+  </div>
+<!-- Add this after your existing tabs content -->

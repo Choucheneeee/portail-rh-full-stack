@@ -1,0 +1,9 @@
+<div class="dialog-container" @fadeScale>
+    <h2 class="dialog-title">Confirmation</h2>
+    <p class="dialog-message">{{ data.message }}</p>
+    <div class="dialog-actions">
+      <button mat-button color="warn" class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button mat-raised-button color="primary" class="confirm-btn" (click)="onConfirm()">Confirm</button>
+    </div>
+  </div>
+  

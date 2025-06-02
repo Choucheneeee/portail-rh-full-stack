@@ -1,0 +1,288 @@
+/* Updated CSS */
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: #fafafa;
+  padding: 3rem 1.5rem;
+  font-family: 'arial';
+  color: #333;
+}
+
+.dashboard-header h1 {
+  font-size: 1.0rem;
+  font-weight: 120;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.filter-container {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.7rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.8rem;
+}
+
+.search-container {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-container input {
+  width: 500px;
+  max-width: 500px;
+  padding: 0.875rem 2.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  border: 1px solid #ddd;
+}
+
+.search-container input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #666;
+}
+
+.users-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.user-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  /* Add default border */
+  border: 2px solid transparent;
+}
+
+.not-verified-card {
+  background: linear-gradient(45deg, #ffebee, #ffcdd2);
+  border-color: #ff4444;
+}
+
+.pending-card {
+  background: linear-gradient(45deg, #fffae0, #fff7d5);
+  border-color: #fbbf24;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+
+.card-content {
+  padding: 0.75rem;
+}
+
+.avatar-block {
+  position: relative;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid #e3f2fd;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.user-avatar {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+.user-info {
+  text-align: center;
+}
+
+
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 400;
+}
+
+.status-badge.approved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge:not(.approved) {
+  background-color: #ffe4e1;
+  color: #9a3412;
+}
+
+.card-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 1rem;
+
+}
+
+.user-card:hover .card-actions {
+  border-radius: 1rem;
+  opacity: 1;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.action-btn:hover {
+  transform: scale(1.2);
+}
+
+.view-btn { background-color: #3b82f6; }
+.approve-btn { background-color: #10b981; }
+.delete-btn { background-color: #ef4444; }
+
+.action-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: white;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+@media (max-width: 1024px) {
+  .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .users-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
+  .dashboard-header {
+    text-align: center;
+  }
+  
+  .user-card {
+    margin: 0 auto;
+    max-width: 280px;
+  }
+  
+  .search-container input {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.status-text { 
+  width: 100%;
+   
+}
+
+/* Add these to your existing CSS */
+
+/* Enhanced pulse animation */
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+/* New animations */
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes buttonEntrance {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Updated user-card hover effect */
+.user-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Animated card actions */
+.card-actions .action-btn {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.user-card:hover .card-actions .action-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered button animation delays */
+.card-actions .action-btn:nth-child(1) { transition-delay: 0.1s; }
+.card-actions .action-btn:nth-child(2) { transition-delay: 0.2s; }
+.card-actions .action-btn:nth-child(3) { transition-delay: 0.3s; }
+
+/* Status badge transition */
+.status-badge {
+  transition: all 0.3s ease;
+}

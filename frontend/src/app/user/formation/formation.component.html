@@ -1,0 +1,160 @@
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+  <div *ngIf="isEditMode">
+    <br>
+        
+   </div> 
+    <div *ngIf="isLoading" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
+  </div>
+    <div class="max-w-4xl mx-auto">
+    <!-- Header Card -->  
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Update the header section -->
+      <div class="bg-gradient-to-r from-blue-800 to-blue-600 px-6 py-4">
+        <div class="flex items-center space-x-3">
+          <i class="fas fa-graduation-cap text-white text-2xl"></i>
+          <h2 class="text-xl font-semibold text-white">
+            {{ isEditMode ? 'Modifier la Formation' : 'Demande de Formation' }}
+          </h2>
+        </div>
+      </div>
+
+      <!-- Update the submit button text -->
+      
+
+      <div class="p-6">
+        <form #formationForm="ngForm" (ngSubmit)="onSubmit()" class="space-y-8">
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-200 rounded-full h-1">
+            <div class="bg-blue-600 h-1 rounded-full transition-all duration-300"
+                 [style.width]="getFormProgress() + '%'">{{getFormProgress()}}</div>
+          </div>
+
+          <!-- General Information -->
+          <div class="bg-gray-50 rounded-lg p-6 space-y-6">
+            <h3 class="text-lg font-medium text-gray-900 border-b pb-2">
+              Informations Générales
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">
+                  Titre de la Formation *
+                </label>
+                <input type="text" 
+                       class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       [(ngModel)]="formationRequest.title"
+                       name="title"
+                       required
+                       placeholder="Ex: Formation en développement Angular">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">
+                  Type de Formation *
+                </label>
+                <select class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        [(ngModel)]="formationRequest.type"
+                        name="type"
+                        required>
+                  <option value="">Sélectionnez le type</option>
+                  <option value="internal">Formation Interne</option>
+                  <option value="external">Formation Externe</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Training Period -->
+          <div class="bg-gray-50 rounded-lg p-6 space-y-6">
+            <h3 class="text-lg font-medium text-gray-900 border-b pb-2">
+              Période de Formation
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Date de début *</label>
+                <div class="relative">
+                  <input type="date"
+                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                         [(ngModel)]="formationRequest.date_Debut"
+                         name="startDate"
+                         [min]="getCurrentDate()"
+                         required>
+                </div>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Date de fin *</label>
+                <div class="relative">
+                  <input type="date"
+                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                         [(ngModel)]="formationRequest.date_Fin"
+                         name="endDate"
+                         [min]="formationRequest.date_Debut"
+                         required>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="bg-gray-50 rounded-lg p-6 space-y-6">
+            <h3 class="text-lg font-medium text-gray-900 border-b pb-2">
+              Détails de la Formation
+            </h3>
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-gray-700">Description *</label>
+                <textarea class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          rows="4"
+                          [(ngModel)]="formationRequest.description"
+                          name="description"
+                          required
+                          placeholder="Décrivez les objectifs et le contenu de la formation..."></textarea>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-gray-700">Organisme</label>
+                  <input type="text"
+                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                         [(ngModel)]="formationRequest.organisme"
+                         name="organisme"
+                         placeholder="Nom de l'organisme">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-gray-700">Coût Estimé (TND)</label>
+                  <input type="number"
+                         class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                         [(ngModel)]="formationRequest.cout"
+                         name="cost"
+                         placeholder="0.00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="flex items-center justify-between pt-6">
+            <small class="text-gray-500">* Champs obligatoires</small>
+            <div class="space-x-3">
+             
+              <button type="button"
+                      (click)="annuler()"
+                      class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-arrow-left mr-2"></i>Annuler
+              </button>
+              <button type="submit"
+              [disabled]="!formationForm.valid"
+              class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+        <i class="fas fa-paper-plane mr-2"></i>
+        {{ isEditMode ? 'Mettre à jour' : 'Soumettre' }}
+      </button> 
+      <button type="button"
+      (click)="resetForm()"
+      class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+<i class="fas fa-times mr-2"></i>Reset
+</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

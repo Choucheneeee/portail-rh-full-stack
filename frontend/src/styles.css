@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+@layer components {
+  .form-card {
+    @apply p-8 rounded-xl border transform transition-all duration-300 hover:scale-[1.01];
+  }
+  
+  .step-number {
+    @apply flex items-center justify-center w-10 h-10 rounded-full text-white mr-4 shadow-lg text-lg;
+  }
+}
+
+
+

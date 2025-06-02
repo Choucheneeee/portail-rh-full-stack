@@ -1,0 +1,333 @@
+/* Parent container: Centered and with a smooth background gradient */
+.parent-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(45deg, #f0f0f0, #e8e8e8); /* Smooth gradient */
+  animation: gradientShift 8s infinite alternate; /* Background gradient animation */
+}
+
+/* Sign-up link with hover animation */
+.sign-up-link {
+  margin-left: 1px;
+  font-size: 11px;
+  text-decoration: underline;
+  color: teal;
+  cursor: pointer;
+  font-weight: 800;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", Geneva, Verdana, sans-serif;
+  transition: color 0.3s ease, text-decoration-color 0.3s ease; /* Smooth hover transition */
+}
+
+.sign-up-link:hover {
+  color: #004d40;
+  text-decoration-color: #004d40;
+}
+
+/* Form container with a smooth box-shadow transition */
+.form_container {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 50px 40px 20px 40px;
+  background-color: #ffffff;
+  box-shadow: 0px 106px 42px rgba(0, 0, 0, 0.01), 0px 59px 36px rgba(0, 0, 0, 0.05), 0px 26px 26px rgba(0, 0, 0, 0.09), 0px 7px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 11px;
+  font-family: "Inter", sans-serif;
+  transition: box-shadow 0.1s ease; /* Box-shadow transition */
+}
+
+.form_container:hover {
+  box-shadow: 0px 0px 30px rgba(0, 0.15, 0, 0.15); /* Increased box-shadow on hover */
+}
+
+/* Logo container with subtle hover animation */
+.logo_container {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(248, 248, 248, 0) 50%, #F8F8F888 100%);
+  border: 1px solid #F7F7F8;
+  filter: drop-shadow(0px 0.5px 0.5px #EFEFEF) drop-shadow(0px 1px 0.5px rgba(239, 239, 239, 0.5));
+  border-radius: 11px;
+  transition: transform 0.3s ease; /* Hover scaling */
+}
+
+.logo_container:hover {
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Title container with animation for text */
+.title_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #212121;
+  animation: fadeIn 0.5s ease; /* Fade-in animation */
+}
+
+.subtitle {
+  font-size: 0.725rem;
+  max-width: 80%;
+  text-align: center;
+  line-height: 1.1rem;
+  color: #8B8E98;
+}
+
+/* Input container with smoother transitions */
+.input_container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.icon {
+  width: 20px;
+  position: absolute;
+  z-index: 99;
+  left: 12px;
+  bottom: 9px;
+}
+
+.input_label {
+  font-size: 0.75rem;
+  color: #8B8E98;
+  font-weight: 600;
+}
+
+.input_field {
+  width: auto;
+  height: 40px;
+  padding: 0 0 0 40px;
+  border-radius: 7px;
+  outline: none;
+  border: 1px solid #242424 ;
+  filter: drop-shadow(0px 1px 0px #efefef) drop-shadow(0px 1px 0.5px rgba(239, 239, 239, 0.5));
+  transition: all 0.3s cubic-bezier(0.15, 0.83, 0.66, 1); /* Smooth transition on focus */
+}
+
+.input_field:focus {
+  border: 1px solid transparent;
+  box-shadow: 0px 0px 0px 2px #242424;
+  background-color: transparent;
+}
+
+.input_field:hover {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Slight shadow on hover */
+}
+
+/* Button styles with hover and focus animations */
+.sign-in_btn, .sign-in_ggl, .sign-in_apl {
+  width: 100%;
+  height: 40px;
+  border-radius: 7px;
+  outline: none;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sign-in_btn {
+  background: #115DFC;
+  margin-bottom: 5vh;
+
+}
+
+.sign-in_ggl {
+  background: #ffffff;
+  color: #242424;
+  border: 1px solid #e5e5e5;
+}
+
+.sign-in_apl {
+  background: #212121;
+}
+
+.sign-in_btn:hover, .sign-in_ggl:hover, .sign-in_apl:hover {
+  transform: scale(1.05); /* Slight scaling on hover */
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1); /* Shadow on hover */
+}
+
+/* Separator line with hover effect */
+.separator .line {
+  width: 100%;
+  height: 1px;
+  background-color: #e8e8e8;
+}
+
+.separator:hover .line {
+  background-color: #cfcfcf; /* Slight darken on hover */
+}
+
+/* Spinner animation with smoother transitions */
+.spinner div {
+  position: absolute;
+  width: 5px;
+  height: 4px;
+  background: #000000;
+  transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1%));
+  animation: spinner-fzua35 1s calc(var(--delay) * 1s) infinite ease;
+}
+
+.spinner div:nth-child(1) {
+  --delay: 0.1;
+  --rotation: 36;
+  --translation: 150;
+}
+
+.spinner div:nth-child(2) {
+  --delay: 0.2;
+  --rotation: 72;
+  --translation: 150;
+}
+
+.spinner div:nth-child(3) {
+  --delay: 0.3;
+  --rotation: 108;
+  --translation: 150;
+}
+
+.spinner div:nth-child(4) {
+  --delay: 0.4;
+  --rotation: 144;
+  --translation: 150;
+}
+
+.spinner div:nth-child(5) {
+  --delay: 0.5;
+  --rotation: 180;
+  --translation: 150;
+}
+
+.spinner div:nth-child(6) {
+  --delay: 0.6;
+  --rotation: 216;
+  --translation: 150;
+}
+
+.spinner div:nth-child(7) {
+  --delay: 0.7;
+  --rotation: 252;
+  --translation: 150;
+}
+
+.spinner div:nth-child(8) {
+  --delay: 0.8;
+  --rotation: 288;
+  --translation: 150;
+}
+
+.spinner div:nth-child(9) {
+  --delay: 0.9;
+  --rotation: 324;
+  --translation: 150;
+}
+
+.spinner div:nth-child(10) {
+  --delay: 1;
+  --rotation: 360;
+  --translation: 150;
+}
+
+@keyframes spinner-fzua35 {
+  0%, 10%, 20%, 30%, 50%, 60%, 70%, 80%, 90%, 100% {
+    transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1%));
+  }
+
+  50% {
+    transform: rotate(calc(var(--rotation) * 1deg)) translate(0, calc(var(--translation) * 1.5%));
+  }
+}
+
+/* Background Gradient animation */
+@keyframes gradientShift {
+  0% {
+    background: linear-gradient(45deg, #f0f0f0, #e8e8e8);
+  }
+  50% {
+    background: linear-gradient(45deg, #e8e8e8, #f0f0f0);
+  }
+  100% {
+    background: linear-gradient(45deg, #f0f0f0, #e8e8e8);
+  }
+}
+
+/* Loader Background Overlay */
+.loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Blur effect when loading */
+.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
+.input_wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  background: #f9f9f9;
+}
+
+.input_icon {
+  margin-left: 10px;
+}
+
+.input_field {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 5px;
+}
+
+select {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 5px;
+}
+
+
+.forgot-password-section {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+}
+
+.forgot-password-btn:hover {
+  text-decoration: underline;
+}

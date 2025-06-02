@@ -1,0 +1,68 @@
+/* Navbar Animations */
+.nav-item {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Dropdown Animation */
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Notification Badge Pulse */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Hover Transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Search Input Focus Effect */
+.search-input:focus {
+  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.3);
+}
+
+/* Profile Image Hover Effect */
+.profile-image {
+  transition: transform 0.2s ease;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+  .mobile-menu {
+    transform-origin: top;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .mobile-menu.hidden {
+    transform: scaleY(0);
+  }
+}

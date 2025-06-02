@@ -1,0 +1,75 @@
+pipeline {
+  agent any
+
+  environment {
+    ACR_NAME = 'portailrh'
+    ACR_LOGIN_SERVER = 'portailrh.azurecr.io'
+    IMAGE_BACK = "${ACR_LOGIN_SERVER}/portal-rh-backend"
+    IMAGE_FRONT = "${ACR_LOGIN_SERVER}/portal-rh-frontend"
+    FRONT_REPO = 'https://github.com/Choucheneeee/PORTAIL_RH_Front.git'
+    FRONT_BRANCH = 'feature/1'
+    BACK_BRANCH = 'feature/1'
+  }
+
+  stages {
+    stage('Clone Frontend Repo') {
+      steps {
+        dir('frontend') {
+          git branch: "${env.FRONT_BRANCH}", url: "${env.FRONT_REPO}"
+        }
+      }
+    }
+
+    stage('Checkout Backend Branch') {
+      steps {
+        checkout([$class: 'GitSCM',
+                branches: [[name: '*/feature/1']],
+                userRemoteConfigs: [[url: 'https://github.com/Choucheneeee/PORTAIL_RH_Back.git', credentialsId: 'github']]
+                ])
+      }
+    }
+
+    stage('Build Backend Image') {
+      steps {
+        bat 'docker build -t portal-rh-backend .'
+      } 
+    }
+
+    stage('Build Frontend Image') {
+      steps {
+        dir('frontend') {
+          bat 'docker build -t portal-rh-frontend .'
+        }
+      }
+    }
+
+    stage('Login to Azure Container Registry') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
+          bat 'docker login ${ACR_LOGIN_SERVER} -u ${ACR_USER} -p ${ACR_PASS}'
+        }
+      }
+    }
+
+    stage('Tag and Push Images') {
+      steps {
+        bat '''
+          docker tag portal-rh-backend ${IMAGE_BACK}:latest
+          docker tag portal-rh-frontend ${IMAGE_FRONT}:latest
+          
+          docker push ${IMAGE_BACK}:latest
+          docker push ${IMAGE_FRONT}:latest
+        '''
+      }
+    }
+
+    stage('Cleanup') {
+      steps {
+        bat '''
+          docker logout ${ACR_LOGIN_SERVER}
+          docker system prune -af
+        '''
+      }
+    }
+  }
+}

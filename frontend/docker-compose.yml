@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portal-rh-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes: 
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - portal-rh-network
+    restart: always
+
+networks:
+  portal-rh-network:
+    name: portal-rh-network

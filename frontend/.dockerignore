@@ -1,0 +1,10 @@
+**/.git
+**/node_modules
+**/dist
+**/.angular
+**/Dockerfile
+**/docker-compose.*
+.gitignore
+README.md
+*.log
+.editorconfig

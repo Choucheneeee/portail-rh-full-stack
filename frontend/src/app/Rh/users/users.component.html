@@ -1,0 +1,87 @@
+<!-- users.component.html -->
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>Gestion des Utilisateurs</h1>
+    <div class="filter-container">
+    
+    
+    
+      <!-- Search Input -->
+      <div class="search-container">
+        <input 
+          [(ngModel)]="searchText"
+          placeholder="Rechercher des utilisateurs... par nom, prénom, email"
+        />
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+    </div>
+    
+    
+  </div>
+
+  <div class="users-grid" [@cardAnimation]="filteredUsers().length">
+    <div 
+    *ngFor="let user of filteredUsers()"
+    class="user-card"
+    [class.not-verified-card]="!user.isVerified"
+    [class.pending-card]="user.isVerified && !user.isApproved"
+    @cardAnimation
+  >
+      <div class="card-content">
+        <div class="avatar-block">
+          <div class="avatar-ring"></div>
+          <img 
+            [src]="user.avatar" 
+            alt="Avatar de {{ user.firstName }}"
+            class="user-avatar"
+          >
+        </div>
+
+        <div class="user-info">
+          <div class="user-header">
+            <p class="user-name">{{ user.firstName }} {{ user.lastName }}</p>
+            <span class="user-role">{{ user.role }}</span>
+          </div>
+          <p class="user-email">{{ user.email }}</p>
+          <div class="status-badge" [class.approved]="user.isApproved">
+            <svg class="status-icon" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="status-text">{{ user.isApproved ? "Accepté" : "En attente d'approbation" }}</span>
+          </div>
+        </div>
+        
+        
+
+        <div class="card-actions" *ngIf="!user.isApproved" @buttonScale>
+          <button class="action-btn view-btn">
+            <img src="assets/images/icon/view.png" alt="Voir l'utilisateur">
+
+          </button>
+          <button class="action-btn approve-btn" (click)="approveUser(user._id)">
+            <img src="assets/images/icon/accept.png" alt="Approuver l'utilisateur">
+          </button>
+          <button class="action-btn delete-btn" (click)="deleteUser(user._id)">
+            <svg viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <!-- Only show this view button if user is approved -->
+
+        <div class="card-actions" *ngIf="user.isApproved" @buttonScale>
+          <button class="action-btn view-btn" (click)="viewProfile(user._id)">
+            <img src="assets/images/icon/view.png" alt="Voir l'utilisateur"   />
+
+          </button>
+         
+        </div>
+        
+        
+        
+      </div>
+    </div>
+  </div>
+</div>

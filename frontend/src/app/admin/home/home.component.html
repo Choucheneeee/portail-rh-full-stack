@@ -1,0 +1,200 @@
+<div class="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Sidebar -->
+  <app-sidebar [isMobileOpen]="isSidebarOpen"></app-sidebar>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden ml-0 md:ml-16 lg:ml-64 transition-all duration-300">
+    <!-- Responsive Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+      <div class="flex items-center justify-between px-4 sm:px-6 py-4">
+        <div class="flex items-center space-x-4">
+          <!-- Mobile Menu Button -->
+          <button 
+            class="md:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
+            (click)="toggleSidebar()">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          
+          <div>
+            <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Tableau de bord</h1>
+            <p class="text-sm text-gray-500 mt-1 hidden sm:block">Bienvenue dans l'espace d'administration</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3 sm:space-x-6">
+          <!-- Search Bar - Hidden on mobile -->
+          <div class="hidden md:block relative group">
+            <input 
+              type="text" 
+              placeholder="Rechercher..." 
+              class="w-48 lg:w-72 pl-12 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 group-hover:bg-white transition-all duration-200"
+            >
+            <svg class="absolute left-4 top-2.5 h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors duration-200" 
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+
+          <!-- Responsive Profile Section -->
+          <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Notifications - Compact on mobile -->
+            <div class="relative">
+              <button (click)="toggleNotificationDropdown($event)" class="relative p-1 sm:p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span *ngIf="unreadCount > 0" class="absolute top-0.5 right-0.5 h-2 w-2 bg-red-500 rounded-full"></span>
+              </button>
+              
+              <!-- Notification Dropdown -->
+              <div *ngIf="isNotificationDropdownOpen" 
+                   class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+                   (click)="$event.stopPropagation()">
+                <div class="p-4">
+                  <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Notifications</h3>
+                    <span *ngIf="unreadCount > 0" class="px-2 py-1 text-xs font-medium text-white bg-red-500 rounded-full">
+                      {{ unreadCount }}
+                    </span>
+                  </div>
+                  
+                  <div class="max-h-96 overflow-y-auto">
+                    <div *ngIf="notifications.length === 0" class="text-center py-4 text-gray-500">
+                      No notifications
+                    </div>
+                    
+                    <div *ngFor="let notification of notifications" 
+                         class="p-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-150"
+                         [class.bg-gray-50]="!notification.read">
+                      <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                          <p class="text-sm text-gray-800">{{ notification.message }}</p>
+                          <p class="text-xs text-gray-500 mt-1">{{ notification.timestamp | date:'short' }}</p>
+                        </div>
+                        <span *ngIf="!notification.read" class="h-2 w-2 bg-blue-500 rounded-full"></span>
+                        <button
+                    class="text-red-600 hover:text-red-900 ml-3">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-3 border-l pl-3 sm:pl-6 border-gray-200">
+              <div class="relative">
+                <img src="assets/images/icon/man.png" 
+                     alt="Administrateur" 
+                     class="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover ring-2 ring-white">
+                <div class="absolute bottom-0 right-0 h-2.5 w-2.5 sm:h-3 sm:w-3 bg-green-500 rounded-full border-2 border-white">
+                </div>
+              </div>
+              <div class="hidden sm:block">
+                <p class="font-medium text-gray-900">Administrateur</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content with Adjusted Padding -->
+    <main class="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+      <!-- Stats Grid with Adjusted Width -->
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
+          <div  
+               class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200"
+               [style.animation-delay]="1 * 100 + 'ms'"
+               [@fadeInUp]>
+            <div class="flex items-center">
+              <div class="flex-shrink-0 p-3 sm:p-4 rounded-lg" 
+                   [ngClass]="'bg-blue-50'">
+                <span class="text-xl sm:text-2xl" [ngClass]="'text-blue-600'">
+                  👥
+                </span>
+              </div>
+              <div class="ml-3 sm:ml-5">
+                <p class="text-sm font-medium text-gray-600">Total Users</p>
+                <div class="flex items-baseline">
+                  <h3 class="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{{Numbercollaborators+NumberAdmin+NumberRh}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div  
+               class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200"
+               [style.animation-delay]="2 * 100 + 'ms'"
+               [@fadeInUp]>
+            <div class="flex items-center">
+              <div class="flex-shrink-0 p-3 sm:p-4 rounded-lg" 
+                   [ngClass]="'bg-green-50'">
+                <span class="text-xl sm:text-2xl" [ngClass]="'text-green-600'">
+                  📈
+                </span>
+              </div>
+              <div class="ml-3 sm:ml-5">
+                <p class="text-sm font-medium text-gray-600">Active Sessions</p>
+                <div class="flex items-baseline">
+                  <h3 class="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{{count}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div  
+               class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200"
+               [style.animation-delay]="3 * 100 + 'ms'"
+               [@fadeInUp]>
+            <div class="flex items-center">
+              <div class="flex-shrink-0 p-3 sm:p-4 rounded-lg" 
+                   [ngClass]="'bg-purple-50'">
+                <span class="text-xl sm:text-2xl" [ngClass]="'text-purple-600'">
+                  👨‍💼
+                </span>
+              </div>
+              <div class="ml-3 sm:ml-5">
+                <p class="text-sm font-medium text-gray-600">Administrateurs</p>
+                <div class="flex items-baseline">
+                  <h3 class="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{{NumberAdmin}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div  
+               class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200"
+               [style.animation-delay]="4 * 100 + 'ms'"
+               [@fadeInUp]>
+            <div class="flex items-center">
+              <div class="flex-shrink-0 p-3 sm:p-4 rounded-lg" 
+                   [ngClass]="'bg-yellow-50'">
+                <span class="text-xl sm:text-2xl" [ngClass]="'text-yellow-600'">
+                  👥
+                </span>
+              </div>
+              <div class="ml-3 sm:ml-5">
+                <p class="text-sm font-medium text-gray-600">Ressources Humaines</p>
+                <div class="flex items-baseline">
+                  <h3 class="text-lg sm:text-2xl font-bold text-gray-900 mt-1">{{NumberRh}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Router Outlet Container -->
+        <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

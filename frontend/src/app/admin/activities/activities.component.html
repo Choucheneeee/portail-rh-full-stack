@@ -1,0 +1,180 @@
+<div class="card">
+    <div class="card-header">
+      <h2 class="card-title">Logs et activités</h2>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="exportLogs()">
+          <i class="fas fa-download"></i> Exporter
+        </button>
+        <button class="btn btn-primary" (click)="refreshLogs()">
+          <i class="fas fa-sync"></i> Actualiser
+        </button>
+      </div>
+    </div>
+  
+    <div class="card-body">
+      <!-- Add chart section before the filters -->
+      <!-- <div class="chart-container" style="position: relative; height:300px; width:100%; margin-bottom: 20px;">
+        <canvas #activityChart></canvas>
+      </div> -->
+  
+      <div class="filters">
+        <div class="form-group">
+          <label for="dateRange">Période</label>
+          <select id="dateRange" class="form-control" [(ngModel)]="selectedDateRange">
+            <option value="today">Aujourd'hui</option>
+            <option value="week">7 derniers jours</option>
+            <option value="month">30 derniers jours</option>
+            <option value="custom">Personnalisée</option>
+          </select>
+        </div>
+        
+        <div class="form-group" *ngIf="selectedDateRange === 'custom'">
+          <label for="startDate">Du</label>
+          <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate">
+        </div>
+        
+        <div class="form-group" *ngIf="selectedDateRange === 'custom'">
+          <label for="endDate">Au</label>
+          <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate">
+        </div>
+        
+        <div class="form-group">
+          <label for="eventType">Type d'événement</label>
+          <select id="eventType" class="form-control" [(ngModel)]="selectedEventType">
+            <option value="all">Tous</option>
+            <option value="login">Connexion</option>
+            <option value="user">Gestion utilisateurs</option>
+            <option value="approval">Approbations</option>
+            <option value="system">Système</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="severity">Importance</label>
+          <select id="severity" class="form-control" [(ngModel)]="selectedSeverity">
+            <option value="all">Tous</option>
+            <option value="info">Information</option>
+            <option value="warning">Avertissement</option>
+            <option value="error">Erreur</option>
+          </select>
+        </div>
+        
+        <button class="btn btn-primary" (click)="applyFilters()">Appliquer</button>
+      </div>
+  
+      <div class="tabs">
+        <div class="tab" 
+             [ngClass]="{'active': activeTab === 'all'}" 
+             (click)="setActiveTab('all')">Toutes les activités</div>
+        <div class="tab" 
+             [ngClass]="{'active': activeTab === 'users'}" 
+             (click)="setActiveTab('users')">Activités utilisateurs</div>
+        <div class="tab" 
+             [ngClass]="{'active': activeTab === 'system'}" 
+             (click)="setActiveTab('system')">Activités système</div>
+        <div class="tab" 
+             [ngClass]="{'active': activeTab === 'security'}" 
+             (click)="setActiveTab('security')">Sécurité</div>
+      </div>
+  
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Heure</th>
+            <th>Utilisateur</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logEntries">
+            <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td>{{ log.user }}</td>
+            <td>{{ log.eventType }}</td>
+            <td>{{ log.description }}</td>
+            <td>
+              <span class="badge" 
+                    [ngClass]="{
+                      'badge-info': log.severity === 'info',
+                      'badge-warning': log.severity === 'warning',
+                      'badge-error': log.severity === 'error'
+                    }">
+                {{ log.severity }}
+              </span>
+            </td>
+            <td class="table-actions">
+              <button class="btn btn-primary" (click)="viewDetails(log)">Détails</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div class="pagination">
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">«</button>
+        <ng-container *ngFor="let page of pages">
+          <button [ngClass]="{'active': currentPage === page}" (click)="goToPage(page)">{{ page }}</button>
+        </ng-container>
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">»</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Log Details Modal -->
+  <div id="logDetailsModal" class="modal" [ngClass]="{'show': showLogModal}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Détails de l'activité</h2>
+        <button class="close" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedLog">
+        <div class="log-detail">
+          <div class="detail-row">
+            <span class="label">Date & Heure:</span>
+            <span class="value">{{ selectedLog.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Utilisateur:</span>
+            <span class="value">{{ selectedLog.user }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Type d'événement:</span>
+            <span class="value">{{ selectedLog.eventType }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Importance:</span>
+            <span class="value">
+              <span class="badge" 
+                    [ngClass]="{
+                      'badge-info': selectedLog.severity === 'info',
+                      'badge-warning': selectedLog.severity === 'warning',
+                      'badge-error': selectedLog.severity === 'error'
+                    }">
+                {{ selectedLog.severity }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Description:</span>
+            <span class="value">{{ selectedLog.description }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Adresse IP:</span>
+            <span class="value">{{ selectedLog.ipAddress }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Navigateur:</span>
+            <span class="value">{{ selectedLog.userAgent }}</span>
+          </div>
+          <div class="detail-row" *ngIf="selectedLog.additionalInfo">
+            <span class="label">Informations supplémentaires:</span>
+            <pre class="value code-block">{{ selectedLog.additionalInfo | json }}</pre>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="closeModal()">Fermer</button>
+      </div>
+    </div>
+  </div>

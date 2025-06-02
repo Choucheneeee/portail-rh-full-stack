@@ -1,0 +1,72 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+  <!-- Spinner de chargement -->
+  <div *ngIf="isLoading" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
+  </div>
+
+  <div class="max-w-md w-full space-y-8 backdrop-blur-xl bg-white/90 p-12 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl">
+    <!-- Alerte Erreur -->
+    <div *ngIf="str" class="rounded-xl bg-red-50 p-4 relative border border-red-100">
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-red-700">{{str}}</p>
+        <button type="button" (click)="hidealert()" class="text-red-400 hover:text-red-500 transition-colors">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Alerte Succès -->
+    <div *ngIf="strsucces" class="rounded-xl bg-green-50 p-4 relative border border-green-100">
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-green-700">{{strsucces}}</p>
+        <button type="button" (click)="hidealertsuc()" class="text-green-400 hover:text-green-500 transition-colors">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenu du formulaire -->
+    <form class="space-y-6" [formGroup]="verifyForm" (ngSubmit)="onSubmit()">
+      <div class="text-center space-y-4">
+        <h2 class="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent">Vérification OTP</h2>
+        <p class="text-sm text-gray-600">Nous avons envoyé un code de vérification à votre email</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse email</label>
+          <input id="email" type="email" formControlName="email" 
+            class="appearance-none relative block w-full px-3 py-2 border border-gray-200 rounded-xl placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300 sm:text-sm"
+            placeholder="Entrez votre email">
+        </div>
+
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-gray-700">Code de vérification</label>
+          <div class="flex gap-2 justify-center">
+            <input #input1 formControlName="c1" type="text" maxlength="1" (input)="moveFocus(input1, input2)"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+            <input #input2 formControlName="c2" type="text" maxlength="1" (input)="moveFocus(input2, input3)"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+            <input #input3 formControlName="c3" type="text" maxlength="1" (input)="moveFocus(input3, input4)"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+            <input #input4 formControlName="c4" type="text" maxlength="1" (input)="moveFocus(input4, input5)"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+            <input #input5 formControlName="c5" type="text" maxlength="1" (input)="moveFocus(input5, input6)"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+            <input #input6 formControlName="c6" type="text" maxlength="1"
+              class="w-12 h-12 text-center border border-gray-200 rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 hover:border-indigo-300">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" 
+        class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-500 hover:to-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02]">
+        Vérifier le code
+      </button>
+    </form>
+  </div>
+</div>

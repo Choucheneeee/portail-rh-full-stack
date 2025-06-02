@@ -1,0 +1,468 @@
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="profile-container">
+    <!-- Message Alert -->
+    <div *ngIf="showMessage" 
+         [class.bg-green-50]="messageType === 'success'"
+         [class.bg-red-50]="messageType === 'error'"
+         [class.border-green-200]="messageType === 'success'"
+         [class.border-red-200]="messageType === 'error'"
+         class="fixed top-4 right-4 z-50 p-4 rounded-lg border shadow-lg max-w-md transition-all duration-300 ease-in-out">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg *ngIf="messageType === 'success'" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <svg *ngIf="messageType === 'error'" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <p [class.text-green-800]="messageType === 'success'"
+             [class.text-red-800]="messageType === 'error'"
+             class="text-sm font-medium">
+            {{ message }}
+          </p>
+        </div>
+        <div class="ml-auto pl-3">
+          <div class="-mx-1.5 -my-1.5">
+            <button type="button"
+                    (click)="closeMessage()"
+                    class="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    [class.text-green-400]="messageType === 'success'"
+                    [class.text-red-400]="messageType === 'error'"
+                    [class.hover:bg-green-100]="messageType === 'success'"
+                    [class.hover:bg-red-100]="messageType === 'error'">
+              <span class="sr-only">Fermer</span>
+              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="userForm.invalid " class="mt-4 mx-4 mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            Informations requises
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <p>Veuillez remplir toutes les informations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading && isSubmitting" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Compact Header -->
+    <div class="bg-gray-400 px-4 sm:px-6 py-6 sm:py-8">
+      <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+        <!-- Avatar Section -->
+        <div class="relative">
+          <div class="w-24 sm:w-32 h-24 sm:h-32">
+            <img [src]="imageUrl || 'assets/images/icon/man.png'" 
+                 [alt]="allinfo.firstName" 
+                 class="rounded-full w-full h-full object-cover ring-4 ring-white/50">
+            
+            
+          </div>
+        </div>
+        
+        <div class="text-center sm:text-left">
+          <h2 class="text-xl sm:text-2xl font-bold text-white">
+            {{ allinfo.firstName || 'Utilisateur' }} {{ allinfo.lastName || '' }}
+          </h2>
+          <p class="text-white/80">{{ allinfo.professionalInfo?.position || 'Poste' }}</p>
+          
+          <!-- Upload Button -->
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <nav class="flex overflow-x-auto sticky top-0 bg-white shadow-sm z-10">
+      <div class="flex-1 flex min-w-full sm:min-w-0">
+        <button *ngFor="let tab of ['personnel', 'professionnel', 'social', 'financier']"
+                type="button" 
+                (click)="toggleView(tab)"
+                class="flex-1 px-4 py-3 text-sm sm:text-base font-medium transition-colors whitespace-nowrap"
+                [class.text-blue-600]="isTabActive(tab)"
+                [class.border-b-2]="isTabActive(tab)"
+                [class.border-blue-600]="isTabActive(tab)">
+          {{ tab === 'personnel' ? 'Personnel' : 
+             tab === 'professionnel' ? 'Professionnel' : 
+             tab === 'social' ? 'Social' : 
+             'Financier' }}
+        </button>
+      </div>
+    </nav>
+
+    <!-- Content Sections -->
+    <div class="p-4 sm:p-6">
+      <!-- Personal Information -->
+      <div *ngIf="isPersonalInfoVisible" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div class="form-group">
+          <label>Email <span class="text-red-500"></span></label>
+          <input type="email" formControlName="email" class="form-input read-only" readonly [class.border-red-500]="userForm.get('email')?.invalid && userForm.get('email')?.touched"/>
+          <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('email')?.errors?.['required']">Email est requis</span>
+            <span *ngIf="userForm.get('email')?.errors?.['email']">Email invalide</span>
+          </div>
+        </div>
+
+        <!-- CIN Field with Toggle -->
+        <div class="form-group">
+          <div class="flex items-center justify-between">
+            <label>CIN <span class="text-red-500"></span></label>
+            <button type="button" 
+                    (click)="toggleCinField()"
+                    class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none">
+              {{ showCinField ? 'Masquer' : 'Afficher' }} CIN
+            </button>
+          </div>
+          <div *ngIf="showCinField" class="mt-2">
+            <input type="number" 
+                   formControlName="cin" 
+                   class="form-input read-only" 
+                   readonly
+                   [class.border-red-500]="userForm.get('cin')?.invalid && userForm.get('cin')?.touched"
+                  />
+            <div *ngIf="userForm.get('cin')?.invalid && userForm.get('cin')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('cin')?.errors?.['required']">CIN est requis</span>
+              <span *ngIf="userForm.get('cin')?.errors?.['pattern']">CIN doit contenir 8 chiffres</span>
+            </div>
+          </div>
+          <div *ngIf="!showCinField" class="mt-2 text-sm text-gray-500">
+            CIN masqué pour des raisons de sécurité
+          </div>
+        </div>
+
+        <app-phone-input 
+          [parentForm]="userForm" 
+          >
+        </app-phone-input>
+        <div class="form-group">
+          <label>Adresse <span class="text-red-500"></span></label>
+          <input type="text" 
+                 formControlName="address" 
+                 class="form-input read-only" 
+                 readonly 
+                 [class.border-red-500]="userForm.get('address')?.invalid && userForm.get('address')?.touched"/>
+        </div>
+        <div class="form-group">
+          <label>Date de naissance <span class="text-red-500"></span></label>
+          <input type="date" class="form-input read-only" readonly formControlName="birthDate" [class.border-red-500]="userForm.get('birthDate')?.invalid && userForm.get('birthDate')?.touched"/>
+          <div *ngIf="userForm.get('birthDate')?.invalid && userForm.get('birthDate')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('birthDate')?.errors?.['required']">Date de naissance est requise</span>
+            <span *ngIf="userForm.get('birthDate')?.errors?.['minimumAge']">Doit avoir 18 ans ou plus</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Information -->
+      <div *ngIf="isProfessionalInfoVisible" class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+
+        <div class="space-y-6">
+          <div class="input-group">
+            <label>Département <span class="text-red-500"></span></label>
+            <select formControlName="department" class="form-input read-only" [disabled]="true" [class.border-red-500]="userForm.get('department')?.invalid && userForm.get('department')?.touched">
+              <option value="">Sélectionner un département</option>
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+            <div *ngIf="userForm.get('department')?.invalid && userForm.get('department')?.touched" class="text-red-500 text-sm mt-1">
+              Département est requis
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>Poste <span class="text-red-500"></span></label>
+            <select formControlName="position" class="form-input read-only" [disabled]="true" [class.border-red-500]="userForm.get('position')?.invalid && userForm.get('position')?.touched">
+              <option value="">Sélectionner un poste</option>
+              <option *ngFor="let pos of positions" [value]="pos">{{ pos }}</option>
+            </select>
+            <div *ngIf="userForm.get('position')?.invalid && userForm.get('position')?.touched" class="text-red-500 text-sm mt-1">
+              Poste est requis
+            </div>
+          </div>
+          </div>
+          
+          <div class="space-y-6">
+
+          <div class="input-group">
+            <label>Date d'embauche <span class="text-red-500">*</span></label>
+            <input type="date" 
+                   formControlName="hiringDate" 
+                   class="form-input" 
+                   [class.border-red-500]="userForm.get('hiringDate')?.invalid && userForm.get('hiringDate')?.touched"/>
+            <div *ngIf="userForm.get('hiringDate')?.invalid && userForm.get('hiringDate')?.touched" class="text-red-500 text-sm mt-1">
+              Date d'embauche est requise
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Salaire <span class="text-red-500">*</span></label>
+            <input type="number" 
+                   formControlName="salary" 
+                   class="form-input" 
+                   [class.border-red-500]="userForm.get('salary')?.invalid && userForm.get('salary')?.touched"/>
+            <div *ngIf="userForm.get('salary')?.invalid && userForm.get('salary')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('salary')?.errors?.['required']">Salaire est requis</span>
+              <span *ngIf="userForm.get('salary')?.errors?.['min']">Salaire doit être positif</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-6">
+
+          <div class="input-group">
+            <label>Responsabilités <span class="text-red-500"></span></label>
+            <textarea formControlName="jobResponsibilities" 
+                      class="form-input read-only" 
+                      readonly 
+                      [class.border-red-500]="userForm.get('jobResponsibilities')?.invalid && userForm.get('jobResponsibilities')?.touched">
+            </textarea>
+          </div>
+          <div class="input-group">
+            <label>Qualifications <span class="text-red-500"></span></label>
+            <textarea formControlName="jobQualifications" 
+                      class="form-input read-only" 
+                      readonly 
+                      [class.border-red-500]="userForm.get('jobQualifications')?.invalid && userForm.get('jobQualifications')?.touched">
+            </textarea>
+          </div>
+          </div>
+      </div>
+
+      <!-- Social Information -->
+      <div *ngIf="isSocialInfoVisible" class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 py-4">
+        <div class="space-y-6">
+
+        <div class="form-group">
+          
+          <label class="block text-sm font-medium text-gray-700 mb-2" >Statut matrimonial <span class="text-red-500"></span></label>
+          <div class="relative">
+
+          <select formControlName="maritalStatus"  class="form-select read-only" [disabled]="true" [class.border-red-500]="userForm.get('maritalStatus')?.invalid && userForm.get('maritalStatus')?.touched">
+            <option value="">Sélectionner un statut</option>
+            <option value="single">Célibataire</option>
+            <option value="married">Marié(e)</option>
+            <option value="divorced">Divorcé(e)</option>
+            <option value="widowed">Veuf(ve)</option>
+          </select>
+          <div class="form-select-chevron"></div>
+
+        </div>
+
+          <div *ngIf="userForm.get('maritalStatus')?.invalid && userForm.get('maritalStatus')?.touched" class="text-red-500 text-sm mt-1">
+            Statut matrimonial est requis
+          </div>
+</div>  
+
+        <div class="form-group">
+
+          <div *ngIf="userForm.get('maritalStatus')?.value !== 'single'" class="form-input">
+            <label>Nombre d'enfants <span class="text-red-500"></span></label>
+            <input type="number" formControlName="children" class="form-input read-only" readonly [class.border-red-500]="userForm.get('children')?.invalid && userForm.get('children')?.touched"/>
+            <div *ngIf="userForm.get('children')?.invalid && userForm.get('children')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('children')?.errors?.['required']">Nombre d'enfants est requis</span>
+              <span *ngIf="userForm.get('children')?.errors?.['min']">Doit être positif</span>
+            </div>
+          </div>
+        </div>
+</div>
+      </div>
+
+      <!-- Financial Information -->
+      <div *ngIf="isFinancialInfoVisible" class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 py-4">
+        <!-- Left Column -->
+        <div class="space-y-6">
+          <!-- Bank Account -->
+
+          <div class="space-y-6">
+            <!-- Contract Type -->
+            <div class="form-group" >
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Type de contrat <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <select formControlName="contractType" 
+                        class="form-select"
+                        [class.input-error]="userForm.get('contractType')?.invalid && userForm.get('contractType')?.touched">
+                  <option value="" disabled>Sélectionner le type de contrat</option>
+                  <option value="CDI">CDI (Contrat à Durée Indéterminée)</option>
+                  <option value="CDD">CDD (Contrat à Durée Déterminée)</option>
+                  <option value="Stage">Stage</option>
+                </select>
+                <div class="form-select-chevron"></div>
+              </div>
+              <div *ngIf="userForm.get('contractType')?.invalid && userForm.get('contractType')?.touched" 
+                   class="text-red-500 text-sm mt-1">
+                Type de contrat est requis
+              </div>
+            </div>
+          
+            <!-- Contract End Date - Only shows for CDD -->
+            <div class="form-group" *ngIf="userForm.get('contractType')?.value === 'CDD' || userForm.get('contractType')?.value === 'Stage'">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Date de fin de contrat <span class="text-red-500">*</span>
+              </label>
+              <input type="date" 
+                     formControlName="contractEndDate"
+                     class="form-input"
+                     [class.input-error]="userForm.get('contractEndDate')?.invalid && userForm.get('contractEndDate')?.touched"
+                     [min]="userForm.get('hiringDate')?.value">
+              <div *ngIf="userForm.get('contractEndDate')?.invalid && userForm.get('contractEndDate')?.touched" 
+                   class="text-red-500 text-sm mt-1">
+                Date de fin de contrat est requise
+              </div>
+            </div>
+          </div>
+      
+          <!-- Tax ID -->
+          <div class="form-group"  *ngIf="userForm.get('contractType')?.value !== 'Stage'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Numéro d'identification fiscale <span class="text-red-500">*</span>
+            </label>
+            <input type="text" formControlName="taxId" 
+                   class="form-input" 
+                   [class.input-error]="userForm.get('taxId')?.invalid && userForm.get('taxId')?.touched"
+                   aria-describedby="taxId-error">
+            <div *ngIf="userForm.get('taxId')?.invalid && userForm.get('taxId')?.touched" 
+                 class="form-error" id="taxId-error">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Same icon as above --></svg>
+              Numéro d'identification fiscale est requis
+            </div>
+          </div>
+      
+          <!-- CNSS -->
+          <div class="form-group"  *ngIf="userForm.get('contractType')?.value !== 'Stage'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Numéro d'identification CNSS <span class="text-red-500">*</span>
+            </label>
+            <input type="text" formControlName="CNSS" 
+                   class="form-input" 
+                   [class.input-error]="userForm.get('CNSS')?.invalid && userForm.get('CNSS')?.touched"
+                   aria-describedby="cnss-error">
+            <div *ngIf="userForm.get('CNSS')?.invalid && userForm.get('CNSS')?.touched" 
+                 class="form-error" id="cnss-error">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Same icon as above --></svg>
+              CNSS ID est requis
+            </div>
+          </div>
+        </div>
+      
+        <!-- Right Column -->
+        <div class="space-y-6">
+          <!-- Payment Method -->
+          <div class="form-group"  *ngIf="userForm.get('contractType')?.value !== 'Stage'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Payment Method <span class="text-red-500">*</span>
+            </label>
+            <div class="relative">
+              <select formControlName="paymentMethod" 
+                      class="form-select"
+                      [class.input-error]="userForm.get('paymentMethod')?.invalid && userForm.get('paymentMethod')?.touched"
+                      aria-describedby="paymentMethod-error">
+                <option value="" disabled>Select payment method</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cash">Cash</option>
+                <option value="Check">Check</option>
+                <option value="Mobile Payment">Mobile Payment</option>
+              </select>
+              <div class="form-select-chevron"></div>
+            </div>
+            <div *ngIf="userForm.get('paymentMethod')?.invalid && userForm.get('paymentMethod')?.touched" 
+                 class="form-error" id="paymentMethod-error">
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Same icon as above --></svg>
+              Payment Method est requis
+            </div>
+          </div>
+      
+          <!-- RIB -->
+          <div class="form-group"  *ngIf="userForm.get('contractType')?.value !== 'Stage'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              RIB <span class="text-red-500">*</span>
+            </label>
+            <input 
+              type="text" 
+              formControlName="RIB"
+              class="form-input" 
+              (input)="formatRIB()"
+              [class.input-error]="userForm.get('RIB')?.invalid && userForm.get('RIB')?.touched"
+            >
+            
+            <!-- Validation Messages -->
+            <div *ngIf="userForm.get('RIB')?.invalid && userForm.get('RIB')?.touched" 
+                 class="form-error" id="rib-error">
+              <!-- Required Error -->
+              <div *ngIf="userForm.get('RIB')?.hasError('required')">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Error icon --></svg>
+                RIB est requis
+              </div>
+              
+              <!-- Pattern Error -->
+              <div *ngIf="userForm.get('RIB')?.hasError('pattern')">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Error icon --></svg>
+                Format RIB invalide. Doit commencer par TN suivi de 22 chiffres (ex: TN5901234567890123456789)
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group"  *ngIf="userForm.get('contractType')?.value !== 'Stage'">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Transport Allowance <span class="text-red-500">*</span>
+            </label>
+            <input 
+              type="number" 
+              formControlName="transportAllowance"
+              class="form-input"
+              [class.input-error]="userForm.get('transportAllowance')?.invalid && userForm.get('transportAllowance')?.touched"
+            >
+            
+            <!-- Validation Messages -->
+            <div *ngIf="userForm.get('transportAllowance')?.invalid && userForm.get('transportAllowance')?.touched" 
+                 class="form-error" id="rib-error">
+              <div *ngIf="userForm.get('transportAllowance')?.hasError('required')">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Error icon --></svg>
+                Transport Allowance est requis avec maximum 40TND
+              </div>
+              <div *ngIf="userForm.get('transportAllowance')?.hasError('max')">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><!-- Error icon --></svg>
+                Maximum Transport Allowance  40TND
+              </div>
+                        
+            </div>
+          </div>
+    
+
+          <!-- Contract Type Section -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="sticky bottom-0 bg-white border-t p-4 flex justify-end">
+      <button type="submit" 
+              [disabled]="userForm.invalid || isSubmitting"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="isSubmitting">
+          <i class="fas fa-spinner fa-spin mr-2"></i>Updating...
+        </span>
+        <span *ngIf="!isSubmitting">
+          Save Changes
+        </span>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    
+  </form>
+</div>

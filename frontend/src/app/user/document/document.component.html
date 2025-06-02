@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="fixed inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent shadow-lg"></div>
+  </div>
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+        {{ isEditMode ? 'Modifier la Demande de Document' : 'Demande de Document' }}
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">Remplissez les informations nécessaires pour votre demande</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-10 transition-all duration-300 hover:shadow-2xl">
+      <form [formGroup]="documentForm" (ngSubmit)="onSubmit()" class="space-y-8">
+        <!-- Document Type -->
+        <div class="space-y-4">
+          <label class="block text-lg font-semibold text-gray-900 mb-4">Type de Document</label>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let type of documentTypes" 
+                 (click)="selectDocumentType(type.value)"
+                 [class.ring-2]="documentForm.get('documentType')?.value === type.value"
+                 [class.ring-blue-500]="documentForm.get('documentType')?.value === type.value"
+                 [class.shadow-lg]="documentForm.get('documentType')?.value === type.value"
+                 class="relative p-6 border-2 rounded-xl cursor-pointer 
+                        hover:border-blue-400 hover:bg-blue-50 group
+                        transition-all duration-200 transform hover:-translate-y-1">
+              <div class="flex flex-col items-center text-center space-y-4">
+                <!-- Icon Circle -->
+                <div class="w-16 h-16 rounded-full flex items-center justify-center
+                            group-hover:scale-110 transition-transform duration-200"
+                     [class.bg-blue-100]="documentForm.get('documentType')?.value === type.value"
+                     [class.bg-gray-100]="documentForm.get('documentType')?.value !== type.value">
+                  <i [class]="'fas ' + type.icon + ' text-2xl transition-colors duration-200'"></i>
+                </div>
+                <!-- Label -->
+                <h3 class="text-lg font-semibold text-gray-900">{{type.label}}</h3>
+                <!-- Description -->
+                <p class="text-sm text-gray-600">{{type.description}}</p>
+                <!-- Selected Check Mark -->
+                <div *ngIf="documentForm.get('documentType')?.value === type.value"
+                     class="absolute top-4 right-4 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <i class="fas fa-check text-white text-sm"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Period Section -->
+        <div *ngIf="documentForm.get('documentType')?.value === 'fiche_paie'" 
+             class="space-y-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
+          <label class="block text-lg font-semibold text-gray-900 mb-4">Période</label>
+          
+          <!-- Period Type -->
+          <div class="space-y-4">
+            <div class="flex gap-6">
+              <label class="relative flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-100 transition-colors">
+                <input type="radio" formControlName="periodType" value="mensuel" 
+                       class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                <span class="text-gray-900 font-medium">Mensuel</span>
+              </label>
+              <label class="relative flex items-center space-x-3 cursor-pointer p-3 rounded-lg hover:bg-gray-100 transition-colors">
+                <input type="radio" formControlName="periodType" value="annuel" 
+                       class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                <span class="text-gray-900 font-medium">Annuel</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Month & Year Selection -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div *ngIf="documentForm.get('periodType')?.value === 'mensuel'">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Mois</mat-label>
+                <mat-select formControlName="month" class="w-full">
+                  <mat-option *ngFor="let month of months" [value]="month.value">
+                    {{ month.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Année</mat-label>
+                <mat-select formControlName="year" class="w-full">
+                  <mat-option *ngFor="let year of years" [value]="year">
+                    {{ year }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-4">
+          <label class="block text-lg font-semibold text-gray-900">Description</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <textarea matInput 
+                      formControlName="description" 
+                      rows="5"
+                      placeholder="Décrivez votre demande en détail..."
+                      class="resize-none p-4 text-gray-700 w-full"></textarea>
+          </mat-form-field>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6">
+          <button type="button"
+                  (click)="cancel()"
+                  class="px-6 py-3 rounded-xl border-2 border-gray-300 text-gray-700 
+                         hover:bg-gray-50 transition-all duration-200 font-medium
+                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Annuler
+          </button>
+          
+          <button type="submit" 
+                  [disabled]="documentForm.invalid"
+                  class="px-6 py-3 rounded-xl text-white bg-gradient-to-r from-blue-600 to-blue-500
+                         hover:from-blue-500 hover:to-blue-400 transition-all duration-200 font-medium
+                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                         disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-paper-plane mr-2"></i>
+            {{ isEditMode ? 'Mettre à jour' : 'Soumettre la demande' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,33 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: portal-rh-backend
+    ports:
+      - "${PORT}:3000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      SYSTEM_PASSWORD: ${SYSTEM_PASSWORD}
+      FRONTEND_URL: ${FRONTEND_URL}
+      COMPANY_NAME: ${COMPANY_NAME}
+      COMPANY_ADDRESS: ${COMPANY_ADDRESS}
+      COMPANY_PHONE: ${COMPANY_PHONE}
+      COMPANY_MAT: ${COMPANY_MAT}
+      COMPANY_CNSS: ${COMPANY_CNSS}
+      COMPANY_LOGO_URL: ${COMPANY_LOGO_URL}
+      PORT: ${PORT}
+      TOKEN: ${TOKEN}
+      ENDPOINT: ${ENDPOINT}
+      MODEL: ${MODEL}
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - portal-network
+
+networks:
+  portal-network:
+    name: portal-network
+    driver: bridge
