@@ -8,6 +8,8 @@ services:
     container_name: portal-rh-backend
     ports:
       - "${PORT:-3000}:3000"
+    env_file:
+      - .env
     environment:
       JWT_SECRET: ${JWT_SECRET}
       EMAIL_USER: ${EMAIL_USER}
@@ -37,6 +39,8 @@ services:
     container_name: portal-rh-frontend
     ports:
       - "4200:4200"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
