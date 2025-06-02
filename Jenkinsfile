@@ -17,15 +17,19 @@ pipeline {
         }
 
         stage('Login to Azure ACR') {
-            steps {
-                script {
-                    bat """
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: 'DOCKERHUB_CREDS',
+                                              passwordVariable: 'DOCKERHUB_CREDS_PSW',
+                                              usernameVariable: 'DOCKERHUB_CREDS_USR')]) {
+                bat """
                     docker logout
-                    bat "echo ${DOCKERHUB_CREDS_PSW} | docker login portailrh.azurecr.io -u PortailRh --password-stdin"   
-                    """
-                }
+                    echo ${DOCKERHUB_CREDS_PSW} | docker login portailrh.azurecr.io -u ${DOCKERHUB_CREDS_USR} --password-stdin
+                """
             }
         }
+    }
+}
 
         stage('Build Docker Images') {
             steps {
