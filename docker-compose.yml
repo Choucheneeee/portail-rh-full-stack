@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: portal-rh-backend
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     environment:
@@ -42,9 +42,9 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
     volumes: 
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules

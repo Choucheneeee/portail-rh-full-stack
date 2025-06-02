@@ -21,7 +21,7 @@ pipeline {
                 script {
                     bat """
                     docker logout
-                    docker login ${ACR_LOGIN_SERVER} -u ${DOCKERHUB_CREDS_USR} -p ${DOCKERHUB_CREDS_PSW}
+                    bat "echo ${DOCKERHUB_CREDS_PSW} | docker login portailrh.azurecr.io -u PortailRh --password-stdin"   
                     """
                 }
             }
