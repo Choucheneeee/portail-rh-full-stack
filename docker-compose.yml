@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: portal-rh-backend
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      SYSTEM_PASSWORD: ${SYSTEM_PASSWORD}
+      FRONTEND_URL: ${FRONTEND_URL}
+      COMPANY_NAME: ${COMPANY_NAME}
+      COMPANY_ADDRESS: ${COMPANY_ADDRESS}
+      COMPANY_PHONE: ${COMPANY_PHONE}
+      COMPANY_MAT: ${COMPANY_MAT}
+      COMPANY_CNSS: ${COMPANY_CNSS}
+      COMPANY_LOGO_URL: ${COMPANY_LOGO_URL}
+      PORT: ${PORT}
+      TOKEN: ${TOKEN}
+      ENDPOINT: ${ENDPOINT}
+      MODEL: ${MODEL}
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      - portal-network
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: portal-rh-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes: 
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - portal-network
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  portal-network:
+    name: portal-network
+    driver: bridge
