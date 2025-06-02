@@ -11,7 +11,11 @@ pipeline {
                 git 'https://github.com/Choucheneeee/portail-rh-full-stack'
             }
         }
-
+        stage('Clean Previous Containers') {
+    steps {
+        bat 'docker-compose down'
+    }
+}
         stage('Build & Start containers') {
             steps {
                 bat 'docker-compose up -d --build'
